@@ -16,14 +16,7 @@
 
 package com.example.android.testing.notes.notes
 
-import com.example.android.testing.notes.Injection
-import com.example.android.testing.notes.addnote.AddNoteActivity
-import com.example.android.testing.notes.notedetail.NoteDetailActivity
-import com.example.android.testing.notes.R
-import com.example.android.testing.notes.data.Note
-
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -37,29 +30,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
-import java.util.ArrayList
-
+import com.example.android.testing.notes.Injection
+import com.example.android.testing.notes.R
+import com.example.android.testing.notes.addnote.AddNoteActivity
+import com.example.android.testing.notes.data.Note
+import com.example.android.testing.notes.notedetail.NoteDetailActivity
 import com.google.common.base.Preconditions.checkNotNull
+import kotlinx.android.synthetic.main.activity_notes.*
+import kotlinx.android.synthetic.main.fragment_notes.*
+import java.util.*
 
 /**
  * Display a grid of [Note]s
  */
 class NotesFragment : Fragment(), NotesContract.View {
 
-    private var mActionsListener: NotesContract.UserActionsListener? = null
-
-    private var mListAdapter: NotesAdapter? = null
+    private lateinit var mActionsListener: NotesContract.UserActionsListener
+    private lateinit var mListAdapter: NotesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mListAdapter = NotesAdapter(ArrayList<Note>(0), mItemListener)
+        mListAdapter = NotesAdapter(ArrayList<Note>(0), onNoteClick)
         mActionsListener = NotesPresenter(Injection.provideNotesRepository(), this)
     }
 
     override fun onResume() {
         super.onResume()
-        mActionsListener!!.loadNotes(false)
+        mActionsListener.loadNotes(false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -71,60 +68,54 @@ class NotesFragment : Fragment(), NotesContract.View {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         // If a note was successfully added, show snackbar
         if (REQUEST_ADD_NOTE == requestCode && Activity.RESULT_OK == resultCode) {
-            Snackbar.make(view!!, getString(R.string.successfully_saved_note_message),
-                    Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view!!, getString(R.string.successfully_saved_note_message), Snackbar.LENGTH_SHORT).show()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val root = inflater!!.inflate(R.layout.fragment_notes, container, false)
-        val recyclerView = root.findViewById(R.id.notes_list) as RecyclerView
-        recyclerView.adapter = mListAdapter
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_notes, container, false)
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        notes_list.adapter = mListAdapter
 
         val numColumns = context.resources.getInteger(R.integer.num_notes_columns)
 
-        recyclerView.setHasFixedSize(true)
-        recyclerView.layoutManager = GridLayoutManager(context, numColumns)
+        notes_list.setHasFixedSize(true)
+        notes_list.layoutManager = GridLayoutManager(context, numColumns)
 
         // Set up floating action button
         val fab = activity.findViewById(R.id.fab_add_notes) as FloatingActionButton
-
         fab.setImageResource(R.drawable.ic_add)
-        fab.setOnClickListener { mActionsListener!!.addNewNote() }
+        fab.setOnClickListener { mActionsListener.addNewNote() }
 
         // Pull-to-refresh
-        val swipeRefreshLayout = root.findViewById(R.id.refresh_layout) as SwipeRefreshLayout
-        swipeRefreshLayout.setColorSchemeColors(
+        refresh_layout.setColorSchemeColors(
                 ContextCompat.getColor(activity, R.color.colorPrimary),
                 ContextCompat.getColor(activity, R.color.colorAccent),
                 ContextCompat.getColor(activity, R.color.colorPrimaryDark))
-        swipeRefreshLayout.setOnRefreshListener { mActionsListener!!.loadNotes(true) }
-        return root
+        refresh_layout.setOnRefreshListener { mActionsListener.loadNotes(true) }
     }
 
     /**
      * Listener for clicks on notes in the RecyclerView.
      */
-    internal var mItemListener: NoteItemListener = object : NoteItemListener {
-        override fun onNoteClick(clickedNote: Note) {
-            mActionsListener!!.openNoteDetails(clickedNote)
-        }
+    internal var onNoteClick: (clickedNote: Note) -> Unit = { clickedNote: Note ->
+        mActionsListener.openNoteDetails(clickedNote)
     }
 
     override fun setProgressIndicator(active: Boolean) {
-
         if (view == null) {
             return
         }
-        val srl = view!!.findViewById(R.id.refresh_layout) as SwipeRefreshLayout
 
         // Make sure setRefreshing() is called after the layout is done with everything else.
-        srl.post { srl.isRefreshing = active }
+        refresh_layout.post { refresh_layout.isRefreshing = active }
     }
 
     override fun showNotes(notes: List<Note>) {
-        mListAdapter!!.replaceData(notes)
+        mListAdapter.replaceData(notes)
     }
 
     override fun showAddNote() {
@@ -135,15 +126,16 @@ class NotesFragment : Fragment(), NotesContract.View {
     override fun showNoteDetailUi(noteId: String) {
         // in it's own Activity, since it makes more sense that way and it gives us the flexibility
         // to show some Intent stubbing.
-        val intent = Intent(context, NoteDetailActivity::class.java)
-        intent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId)
-        startActivity(intent)
+        startActivity(
+                Intent(context, NoteDetailActivity::class.java).apply {
+                    putExtra(NoteDetailActivity.EXTRA_NOTE_ID, noteId)
+                })
     }
 
 
-    private class NotesAdapter(notes: List<Note>, private val mItemListener: NoteItemListener) : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
+    private class NotesAdapter(notes: List<Note>, private val onNoteClick: (clickedNote: Note) -> Unit) : RecyclerView.Adapter<NotesAdapter.ViewHolder>() {
 
-        private var mNotes: List<Note>? = null
+        private lateinit var mNotes: List<Note>
 
         init {
             setList(notes)
@@ -154,11 +146,11 @@ class NotesFragment : Fragment(), NotesContract.View {
             val inflater = LayoutInflater.from(context)
             val noteView = inflater.inflate(R.layout.item_note, parent, false)
 
-            return ViewHolder(noteView, mItemListener)
+            return ViewHolder(noteView, onNoteClick)
         }
 
         override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-            val note = mNotes!![position]
+            val note = mNotes[position]
 
             viewHolder.title.text = note.title
             viewHolder.description.text = note.description
@@ -170,50 +162,38 @@ class NotesFragment : Fragment(), NotesContract.View {
         }
 
         private fun setList(notes: List<Note>) {
-            mNotes = checkNotNull(notes)
+            mNotes = notes
         }
 
         override fun getItemCount(): Int {
-            return mNotes!!.size
+            return mNotes.size
         }
 
         fun getItem(position: Int): Note {
-            return mNotes!![position]
+            return mNotes[position]
         }
 
-        inner class ViewHolder(itemView: View, private val mItemListener: NoteItemListener) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        inner class ViewHolder(itemView: View, private val onNoteClick: (clickedNote: Note) -> Unit) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-            var title: TextView
-
-            var description: TextView
+            val title: TextView by lazy { itemView.findViewById(R.id.note_detail_title) as TextView }
+            val description: TextView by lazy { itemView.findViewById(R.id.note_detail_description) as TextView }
 
             init {
-                title = itemView.findViewById(R.id.note_detail_title) as TextView
-                description = itemView.findViewById(R.id.note_detail_description) as TextView
                 itemView.setOnClickListener(this)
             }
 
             override fun onClick(v: View) {
-                val position = adapterPosition
-                val note = getItem(position)
-                mItemListener.onNoteClick(note)
-
+                onNoteClick(getItem(adapterPosition))
             }
         }
-    }
-
-    interface NoteItemListener {
-
-        fun onNoteClick(clickedNote: Note)
     }
 
     companion object {
 
         private val REQUEST_ADD_NOTE = 1
 
-        fun newInstance(): NotesFragment {
-            return NotesFragment()
-        }
+        fun newInstance(): NotesFragment = NotesFragment()
     }
 
-}// Requires empty public constructor
+}
+// Requires empty public constructor

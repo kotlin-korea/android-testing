@@ -28,15 +28,7 @@ import com.google.common.base.Preconditions.checkNotNull
  * UI as required.
  */
 class NotesPresenter(
-        notesRepository: NotesRepository, notesView: NotesContract.View) : NotesContract.UserActionsListener {
-
-    private val mNotesRepository: NotesRepository
-    private val mNotesView: NotesContract.View
-
-    init {
-        mNotesRepository = checkNotNull(notesRepository, "notesRepository cannot be null")
-        mNotesView = checkNotNull<NotesContract.View>(notesView, "notesView cannot be null!")
-    }
+        val mNotesRepository: NotesRepository, val mNotesView: NotesContract.View) : NotesContract.UserActionsListener {
 
     override fun loadNotes(forceUpdate: Boolean) {
         mNotesView.setProgressIndicator(true)
