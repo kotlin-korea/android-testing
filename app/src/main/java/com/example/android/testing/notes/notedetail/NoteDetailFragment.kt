@@ -36,7 +36,7 @@ import kotlinx.android.synthetic.main.fragment_detail.*
  */
 class NoteDetailFragment : Fragment(), NoteDetailContract.View {
 
-    private var mActionsListener: NoteDetailContract.UserActionsListener? = null
+    private lateinit var mActionsListener: NoteDetailContract.UserActionsListener
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -50,7 +50,7 @@ class NoteDetailFragment : Fragment(), NoteDetailContract.View {
     override fun onResume() {
         super.onResume()
         val noteId = arguments.getString(ARGUMENT_NOTE_ID)
-        mActionsListener?.openNote(noteId)
+        mActionsListener.openNote(noteId)
     }
 
     override fun setProgressIndicator(active: Boolean) {

@@ -14,38 +14,37 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.addnote;
+package com.example.android.testing.notes.addnote
 
-import android.support.annotation.NonNull;
-
-import java.io.IOException;
+import java.io.IOException
 
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface AddNoteContract {
+interface AddNoteContract {
 
     interface View {
 
-        void showEmptyNoteError();
+        fun showEmptyNoteError()
 
-        void showNotesList();
+        fun showNotesList()
 
-        void openCamera(String saveTo);
+        fun openCamera(saveTo: String)
 
-        void showImagePreview(@NonNull String uri);
+        fun showImagePreview(uri: String)
 
-        void showImageError();
+        fun showImageError()
     }
 
     interface UserActionsListener {
 
-        void saveNote(String title, String description);
+        fun saveNote(title: String, description: String)
 
-        void takePicture() throws IOException;
+        @Throws(IOException::class)
+        fun takePicture()
 
-        void imageAvailable();
+        fun imageAvailable()
 
-        void imageCaptureFailed();
+        fun imageCaptureFailed()
     }
 }
