@@ -14,36 +14,34 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.notedetail;
-
-import android.support.annotation.Nullable;
+package com.example.android.testing.notes.notedetail
 
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface NoteDetailContract {
+interface NoteDetailContract {
 
     interface View {
 
-        void setProgressIndicator(boolean active);
+        fun setProgressIndicator(active: Boolean)
 
-        void showMissingNote();
+        fun showMissingNote()
 
-        void hideTitle();
+        fun hideTitle()
 
-        void showTitle(String title);
+        fun showTitle(title: String)
 
-        void showImage(String imageUrl);
+        fun showImage(imageUrl: String)
 
-        void hideImage();
+        fun hideImage()
 
-        void hideDescription();
+        fun hideDescription()
 
-        void showDescription(String description);
+        fun showDescription(description: String)
     }
 
     interface UserActionsListener {
 
-        void openNote(@Nullable String noteId);
+        fun openNote(noteId: String?)
     }
 }
