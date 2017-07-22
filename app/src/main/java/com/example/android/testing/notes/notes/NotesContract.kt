@@ -14,36 +14,32 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.notes;
+package com.example.android.testing.notes.notes
 
-import android.support.annotation.NonNull;
-
-import com.example.android.testing.notes.data.Note;
-
-import java.util.List;
+import com.example.android.testing.notes.data.Note
 
 /**
  * This specifies the contract between the view and the presenter.
  */
-public interface NotesContract {
+interface NotesContract {
 
     interface View {
 
-        void setProgressIndicator(boolean active);
+        fun setProgressIndicator(active: Boolean)
 
-        void showNotes(List<Note> notes);
+        fun showNotes(notes: List<Note>)
 
-        void showAddNote();
+        fun showAddNote()
 
-        void showNoteDetailUi(String noteId);
+        fun showNoteDetailUi(noteId: String)
     }
 
     interface UserActionsListener {
 
-        void loadNotes(boolean forceUpdate);
+        fun loadNotes(forceUpdate: Boolean)
 
-        void addNewNote();
+        fun addNewNote()
 
-        void openNoteDetails(@NonNull Note requestedNote);
+        fun openNoteDetails(requestedNote: Note)
     }
 }
