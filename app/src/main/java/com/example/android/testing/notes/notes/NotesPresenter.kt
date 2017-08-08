@@ -40,11 +40,13 @@ class NotesPresenter(
         // that the app is busy until the response is handled.
         EspressoIdlingResource.increment() // App is busy until further notice
 
-        mNotesRepository.getNotes { notes ->
-            EspressoIdlingResource.decrement() // Set app as idle.
-            mNotesView.setProgressIndicator(false)
-            mNotesView.showNotes(notes)
-        }
+        mNotesRepository.getNotes(object : NotesRepository.LoadNotesCallback {
+            override fun onNotesLoaded(notes: List<Note>?) {
+                EspressoIdlingResource.decrement() // Set app as idle.
+                mNotesView.setProgressIndicator(false)
+                mNotesView.showNotes(notes ?: ArrayList<Note>())
+            }
+        })
     }
 
     override fun addNewNote() {

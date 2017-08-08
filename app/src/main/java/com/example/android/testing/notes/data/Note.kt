@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.data;
+package com.example.android.testing.notes.data
 
-import java.util.List;
+import java.util.*
+import kotlin.jvm.internal.Intrinsics
 
 /**
- * Defines an interface to the service API that is used by this application. All data request should
- * be piped through this interface.
+ * Immutable model class for a Note.
  */
-public interface NotesServiceApi {
+data class Note @JvmOverloads constructor(
+        val title: String?,
+        val description: String?,
+        val imageUrl: String? = null) {
 
-    interface NotesServiceCallback<T> {
+    val id: String = UUID.randomUUID().toString()
 
-        void onLoaded(T notes);
-    }
+    val isEmpty: Boolean
+        get() = (title == null || "" == title) && (description == null || "" == description)
 
-    void getAllNotes(NotesServiceCallback<List<Note>> callback);
-
-    void getNote(String noteId, NotesServiceCallback<Note> callback);
-
-    void saveNote(Note note);
+    /* todo: 데이터 클래스의 equal, hashCode 동작 확실히 알기
+     - equal 값이 같은지 비교, 다른 객체라도 값이 같으면 true
+     */
 }

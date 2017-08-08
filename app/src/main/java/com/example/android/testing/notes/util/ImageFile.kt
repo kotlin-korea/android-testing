@@ -14,33 +14,21 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.data;
+package com.example.android.testing.notes.util
 
-import android.support.annotation.NonNull;
-
-import java.util.List;
+import java.io.IOException
 
 /**
- * Main entry point for accessing notes data.
+ * A wrapper for handling image files.
  */
-public interface NotesRepository {
+interface ImageFile {
 
-    interface LoadNotesCallback {
+    @Throws(IOException::class)
+    fun create(name: String, extension: String)
 
-        void onNotesLoaded(List<Note> notes);
-    }
+    fun exists(): Boolean
 
-    interface GetNoteCallback {
+    fun delete()
 
-        void onNoteLoaded(Note note);
-    }
-
-    void getNotes(@NonNull LoadNotesCallback callback);
-
-    void getNote(@NonNull String noteId, @NonNull GetNoteCallback callback);
-
-    void saveNote(@NonNull Note note);
-
-    void refreshData();
-
+    val path: String
 }

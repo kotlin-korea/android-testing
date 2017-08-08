@@ -19,8 +19,6 @@ package com.example.android.testing.notes.notedetail
 import com.example.android.testing.notes.data.Note
 import com.example.android.testing.notes.data.NotesRepository
 
-import com.google.common.base.Preconditions.checkNotNull
-
 /**
  * Listens to user actions from the UI ([NoteDetailFragment]), retrieves the data and updates
  * the UI as required.
@@ -35,15 +33,17 @@ class NoteDetailPresenter(val mNotesRepository: NotesRepository,
         }
 
         mNotesDetailView.setProgressIndicator(true)
-        mNotesRepository.getNote(noteId!!) { note ->
-            mNotesDetailView.setProgressIndicator(false)
-            if (null == note) {
-                mNotesDetailView.showMissingNote()
+        mNotesRepository.getNote(noteId!!, object : NotesRepository.GetNoteCallback {
+            override fun onNoteLoaded(note: Note?) {
+                mNotesDetailView.setProgressIndicator(false)
+                if (null == note) {
+                    mNotesDetailView.showMissingNote()
+                }
+                else {
+                    showNote(note)
+                }
             }
-            else {
-                showNote(note)
-            }
-        }
+        })
     }
 
     private fun showNote(note: Note) {

@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.data;
+package com.example.android.testing.notes.data
 
-import android.support.annotation.NonNull;
+/**
+ * Main entry point for accessing notes data.
+ */
+interface NotesRepository {
 
-import static com.google.common.base.Preconditions.checkNotNull;
+    interface LoadNotesCallback {
 
-public class NoteRepositories {
-
-    private NoteRepositories() {
-        // no instance
+        fun onNotesLoaded(notes: List<Note>?)
     }
 
-    private static NotesRepository repository = null;
+    interface GetNoteCallback {
 
-    public synchronized static NotesRepository getInMemoryRepoInstance(@NonNull NotesServiceApi notesServiceApi) {
-        checkNotNull(notesServiceApi);
-        if (null == repository) {
-            repository = new InMemoryNotesRepository(notesServiceApi);
-        }
-        return repository;
+        fun onNoteLoaded(note: Note?)
     }
+
+    fun getNotes(callback: LoadNotesCallback)
+
+    fun getNote(noteId: String, callback: GetNoteCallback)
+
+    fun saveNote(note: Note)
+
+    fun refreshData()
+
 }

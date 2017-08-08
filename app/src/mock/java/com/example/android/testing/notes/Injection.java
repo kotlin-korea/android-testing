@@ -34,6 +34,6 @@ public class Injection {
     }
 
     public static NotesRepository provideNotesRepository() {
-        return NoteRepositories.getInMemoryRepoInstance(new FakeNotesServiceApiImpl());
+        return NoteRepositories.INSTANCE.getInMemoryRepoInstance(new FakeNotesServiceApiImpl());
     }
 }

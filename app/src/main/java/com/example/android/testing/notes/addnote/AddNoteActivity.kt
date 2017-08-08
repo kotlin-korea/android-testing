@@ -62,5 +62,5 @@ class AddNoteActivity : AppCompatActivity() {
 
     val countingIdlingResource: IdlingResource
         @VisibleForTesting
-        get() = EspressoIdlingResource.getIdlingResource()
+        get() = EspressoIdlingResource.idlingResource
 }
