@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.data;
+package com.example.android.testing.notes.data
 
-import android.support.v4.util.ArrayMap;
+import android.support.v4.util.ArrayMap
 
 /**
  * This is the endpoint for your data source. Typically, it would be a SQLite db and/or a server
  * API. In this example, we fake this by creating the data on the fly.
  */
-public final class NotesServiceApiEndpoint {
+object NotesServiceApiEndpoint {
 
-    static {
-        DATA = new ArrayMap(2);
-        addNote("Oh yes!", "I demand trial by Unit testing", null);
-        addNote("Espresso", "UI Testing for Android", null);
+    /* todo: DATA 를 위에쓰고 init 에서 초기화를 할수있는데, init 에서 초기화 설정하는데 DATA 변수를 init 밑에서 선언하면 컴파일 에러 */
+
+    private val DATA: ArrayMap<String, Note> = ArrayMap(2)
+
+    init {
+        addNote("Oh yes!", "I demand trial by Unit testing", null)
+        addNote("Espresso", "UI Testing for Android", null)
     }
 
-    private final static ArrayMap<String, Note> DATA;
-
-    private static void addNote(String title, String description, String imageUrl) {
-        Note newNote = new Note(title, description, imageUrl);
-        DATA.put(newNote.getId(), newNote);
+    private fun addNote(title: String, description: String, imageUrl: String?) {
+        val newNote = Note(title, description, imageUrl)
+        DATA.put(newNote.id, newNote)
     }
 
     /**
      * @return the Notes to show when starting the app.
      */
-    public static ArrayMap<String, Note> loadPersistedNotes() {
-        return DATA;
+    fun loadPersistedNotes(): ArrayMap<String, Note> {
+        return DATA
     }
 }

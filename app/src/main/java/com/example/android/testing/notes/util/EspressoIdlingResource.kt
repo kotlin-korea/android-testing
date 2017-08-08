@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.data;
+package com.example.android.testing.notes.util
 
-import android.support.annotation.NonNull;
+import android.support.test.espresso.IdlingResource
 
-import static com.google.common.base.Preconditions.checkNotNull;
+/**
+ * Contains a static reference to [IdlingResource], only available in the 'mock' build type.
+ */
+object EspressoIdlingResource {
 
-public class NoteRepositories {
+    private val RESOURCE = "GLOBAL"
 
-    private NoteRepositories() {
-        // no instance
+    private val mCountingIdlingResource = SimpleCountingIdlingResource(RESOURCE)
+
+    fun increment() {
+        mCountingIdlingResource.increment()
     }
 
-    private static NotesRepository repository = null;
-
-    public synchronized static NotesRepository getInMemoryRepoInstance(@NonNull NotesServiceApi notesServiceApi) {
-        checkNotNull(notesServiceApi);
-        if (null == repository) {
-            repository = new InMemoryNotesRepository(notesServiceApi);
-        }
-        return repository;
+    fun decrement() {
+        mCountingIdlingResource.decrement()
     }
+
+    val idlingResource: IdlingResource
+        get() = mCountingIdlingResource
 }

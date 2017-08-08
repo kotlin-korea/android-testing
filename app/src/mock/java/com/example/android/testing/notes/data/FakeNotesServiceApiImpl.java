@@ -21,6 +21,8 @@ import com.google.common.collect.Lists;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.util.ArrayMap;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -32,12 +34,11 @@ public class FakeNotesServiceApiImpl implements NotesServiceApi {
     private static final ArrayMap<String, Note> NOTES_SERVICE_DATA = new ArrayMap();
 
     @Override
-    public void getAllNotes(NotesServiceCallback<List<Note>> callback) {
+    public void getAllNotes(@NotNull NotesServiceCallback<? super List<Note>> callback) {
         callback.onLoaded(Lists.newArrayList(NOTES_SERVICE_DATA.values()));
     }
-
     @Override
-    public void getNote(String noteId, NotesServiceCallback<Note> callback) {
+    public void getNote(@NotNull String noteId, @NotNull NotesServiceCallback<? super Note> callback) {
         Note note = NOTES_SERVICE_DATA.get(noteId);
         callback.onLoaded(note);
     }

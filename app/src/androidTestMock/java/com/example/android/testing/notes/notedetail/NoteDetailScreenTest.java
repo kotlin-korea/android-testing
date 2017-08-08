@@ -92,7 +92,7 @@ public class NoteDetailScreenTest {
 
         // Lazily start the Activity from the ActivityTestRule this time to inject the start Intent
         Intent startIntent = new Intent();
-        startIntent.putExtra(NoteDetailActivity.EXTRA_NOTE_ID, NOTE.getId());
+        startIntent.putExtra(NoteDetailActivity.Companion.getEXTRA_NOTE_ID(), NOTE.getId());
         mNoteDetailActivityTestRule.launchActivity(startIntent);
 
         registerIdlingResource();
