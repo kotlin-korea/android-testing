@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.data;
-
-import java.util.List;
+package com.example.android.testing.notes.data
 
 /**
  * Defines an interface to the service API that is used by this application. All data request should
  * be piped through this interface.
  */
-public interface NotesServiceApi {
+interface NotesServiceApi {
 
-    interface NotesServiceCallback<T> {
+    interface NotesServiceCallback<in T> {
 
-        void onLoaded(T notes);
+        fun onLoaded(notes: T)
     }
 
-    void getAllNotes(NotesServiceCallback<List<Note>> callback);
+    fun getAllNotes(callback: NotesServiceCallback<List<Note>>)
 
-    void getNote(String noteId, NotesServiceCallback<Note> callback);
+    fun getNote(noteId: String, callback: NotesServiceCallback<Note?>)
 
-    void saveNote(Note note);
+    fun saveNote(note: Note)
 }

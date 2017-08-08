@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.data;
+package com.example.android.testing.notes.data
 
-import android.support.annotation.NonNull;
-
-import java.util.List;
+import java.util.*
+import kotlin.jvm.internal.Intrinsics
 
 /**
- * Main entry point for accessing notes data.
+ * Immutable model class for a Note.
  */
-public interface NotesRepository {
+data class Note @JvmOverloads constructor(
+        val title: String?,
+        val description: String?,
+        val imageUrl: String? = null) {
 
-    interface LoadNotesCallback {
+    val id: String = UUID.randomUUID().toString()
 
-        void onNotesLoaded(List<Note> notes);
-    }
+    val isEmpty: Boolean
+        get() = (title == null || "" == title) && (description == null || "" == description)
 
-    interface GetNoteCallback {
-
-        void onNoteLoaded(Note note);
-    }
-
-    void getNotes(@NonNull LoadNotesCallback callback);
-
-    void getNote(@NonNull String noteId, @NonNull GetNoteCallback callback);
-
-    void saveNote(@NonNull Note note);
-
-    void refreshData();
-
+    /* todo: 데이터 클래스의 equal, hashCode 동작 확실히 알기
+     - equal 값이 같은지 비교, 다른 객체라도 값이 같으면 true
+     */
 }

@@ -14,19 +14,29 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.util;
-
-import java.io.IOException;
+package com.example.android.testing.notes.data
 
 /**
- * A wrapper for handling image files.
+ * Main entry point for accessing notes data.
  */
-public interface ImageFile {
-    void create(String name, String extension) throws IOException;
+interface NotesRepository {
 
-    boolean exists();
+    interface LoadNotesCallback {
 
-    void delete();
+        fun onNotesLoaded(notes: List<Note>?)
+    }
 
-    String getPath();
+    interface GetNoteCallback {
+
+        fun onNoteLoaded(note: Note?)
+    }
+
+    fun getNotes(callback: LoadNotesCallback)
+
+    fun getNote(noteId: String, callback: GetNoteCallback)
+
+    fun saveNote(note: Note)
+
+    fun refreshData()
+
 }

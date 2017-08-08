@@ -14,36 +14,21 @@
  * limitations under the License.
  */
 
-package com.example.android.testing.notes.notedetail;
+package com.example.android.testing.notes.util
 
-import android.support.annotation.Nullable;
+import java.io.IOException
 
 /**
- * This specifies the contract between the view and the presenter.
+ * A wrapper for handling image files.
  */
-public interface NoteDetailContract {
+interface ImageFile {
 
-    interface View {
+    @Throws(IOException::class)
+    fun create(name: String, extension: String)
 
-        void setProgressIndicator(boolean active);
+    fun exists(): Boolean
 
-        void showMissingNote();
+    fun delete()
 
-        void hideTitle();
-
-        void showTitle(String title);
-
-        void showImage(String imageUrl);
-
-        void hideImage();
-
-        void hideDescription();
-
-        void showDescription(String description);
-    }
-
-    interface UserActionsListener {
-
-        void openNote(@Nullable String noteId);
-    }
+    val path: String
 }
